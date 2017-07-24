@@ -1,0 +1,22 @@
+{
+  "name": "ddrag",
+  "version": "1.0.3",
+  "description": "a drag package",
+  "main": "ddrag.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/travelclover/ddrag.git"
+  },
+  "keywords": [
+    "drag"
+  ],
+  "author": "travelclover",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/travelclover/ddrag/issues"
+  },
+  "homepage": "https://github.com/travelclover/ddrag#readme"
+}
