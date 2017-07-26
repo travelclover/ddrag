@@ -14,4 +14,11 @@
 		marginRight : '10', // 可选项，拖拽距离右边的边界值
 		marginBottom : '20px' // 可选项，拖拽距离下边的边界值
 	}
-	ddrag(option);
+	var myDdrag = new ddrag(option);
+
+初始化后可通过 set 方法改变初始化时的参数：
+
+	myDdrag.set({
+		marginLeft: '20px',
+		positionX: '10px'
+	})
