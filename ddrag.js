@@ -15,7 +15,7 @@
  *
  * @return {[type]}        [description]
  */
-function dDrag (option) {
+function Ddrag (option) {
     // option.el 需要拖拽的对象
     this.el = document.querySelector(option.el);
     // 获取实际需要拖拽的对象
@@ -253,4 +253,4 @@ function dDrag (option) {
     }
 }
 
-export default dDrag
+export default Ddrag
