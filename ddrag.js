@@ -10,7 +10,9 @@
  *      marginLeft          :   拖拽距离左边的边界值,
  *      marginTop           :   拖拽距离上边的边界值,
  *      marginRight         :   拖拽距离右边的边界值,
- *      marginBottom        :   拖拽距离下边的边界值
+ *      marginBottom        :   拖拽距离下边的边界值,
+ *      draging             :   拖拽中的回调函数,
+ *      afterDrag           :   拖动后的回调函数(function)
  * }
  *
  * @return {[type]}        [description]
@@ -40,6 +42,9 @@ function Ddrag (option) {
     this.targetEl.style.position = 'fixed';
     this.targetEl.style.margin = '0'; // 设置margin值为0
     console.dir(this.el)
+    console.dir(this.targetEl)
+    this.top = this.targetEl.style.top;
+    this.left = this.targetEl.style.left;
 
     var setPositionX = setX.bind(this);
     var setPositionY = setY.bind(this);
@@ -99,14 +104,24 @@ function Ddrag (option) {
     }
 
     /**
+     * 回调函数
+     */
+    var draging = null;
+    var afterDrag = null;
+    if (typeof option.draging !== 'undefined') {
+        draging = option.draging;
+    }
+    if (typeof option.afterDrag !== 'undefined') {
+        afterDrag = option.afterDrag;
+    }
+
+    /**
      * 添加mousedown事件
      */
     this.el.onmousedown = (e) => {
         // 记录鼠标相对 el 的位置
-        // var distance_X = e.x - e.target.offsetLeft; // 鼠标相对于 el 的 X 距离
-        // var distance_Y = e.y - e.target.offsetTop; // 鼠标相对于 el 的 Y 距离 dragMove(distance_X,distance_Y,event)
-        var distance_X = e.x - this.targetEl.offsetLeft;
-        var distance_Y = e.y - this.targetEl.offsetTop;
+        var distance_X = e.x - this.targetEl.offsetLeft; // 鼠标相对于 el 的 X 距离
+        var distance_Y = e.y - this.targetEl.offsetTop; // 鼠标相对于 el 的 Y 距离 dragMove(distance_X,distance_Y,event)
         document.onmousemove = (e) => {
             var setX;
             var setY;
@@ -114,22 +129,35 @@ function Ddrag (option) {
             setY = e.y - distance_Y;
             if (setX < settings.marginLeft) {
                 this.targetEl.style.left = settings.marginLeft + 'px';
+                this.left = settings.marginLeft;
             } else if (window.innerWidth - setX - this.targetEl.clientWidth < settings.marginRight) {
                 this.targetEl.style.left = window.innerWidth - this.targetEl.clientWidth - settings.marginRight + 'px';
+                this.left = window.innerWidth - this.targetEl.clientWidth - settings.marginRight;
             } else {
                 this.targetEl.style.left = setX + 'px';
+                this.left = setX;
             }
             if (setY < settings.marginTop) {
                 this.targetEl.style.top = settings.marginTop + 'px';
+                this.top = settings.marginTop;
             } else if (window.innerHeight - setY - this.targetEl.clientHeight < settings.marginBottom) {
                 this.targetEl.style.top = window.innerHeight - this.targetEl.clientHeight - settings.marginBottom + 'px';
+                this.top = window.innerHeight - this.targetEl.clientHeight - settings.marginBottom;
             } else {
                 this.targetEl.style.top = setY + 'px';
+                this.top = setY;
+            }
+
+            if (draging) {
+                draging(e)
             }
         }
-        document.onmouseup = function (){
+        document.onmouseup = (e) => {
             document.onmousemove = null;
             document.onmouseup = null;
+            if (afterDrag) {
+                afterDrag(e);
+            }
         }
         return false
     }
@@ -192,6 +220,13 @@ function Ddrag (option) {
         if (typeof opt.positionY !== 'undefined') {
             setPositionY(opt.positionY)
         }
+
+        if (typeof opt.draging !== 'undefined') {
+            draging = opt.draging;
+        }
+        if (typeof opt.afterDrag !== 'undefined') {
+            afterDrag = opt.afterDrag;
+        }
     }
 
     /**
@@ -202,12 +237,12 @@ function Ddrag (option) {
     function setX(x) {
         if (/^(\d+)\.?(\d*)%$/.test(x) ) { // 百分比
             this.targetEl.style.left = RegExp.$2 ?
-                            (window.innerWidth * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
-                            window.innerWidth * (RegExp.$1 / 100) + 'px';
+                (window.innerWidth * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
+                window.innerWidth * (RegExp.$1 / 100) + 'px';
         } else if (/^(\d+)\.?(\d*)px$/.test(x) ) { // 像素px
             this.targetEl.style.left = RegExp.$2 ?
-                            ((RegExp.$1 + '.' + RegExp.$2) + 'px') :
-                            (RegExp.$1 + 'px');
+                ((RegExp.$1 + '.' + RegExp.$2) + 'px') :
+                (RegExp.$1 + 'px');
         } else if (!isNaN(Number(x)) ) { // 纯数字
             this.targetEl.style.left = x + 'px';
         } else if (x.toLowerCase() == 'left') { // 'left'
@@ -231,13 +266,13 @@ function Ddrag (option) {
      */
     function setY(y) {
         if (/^(\d+)\.?(\d*)%$/.test(y) ) { // 百分比
-            this.targetEl.style.top =   RegExp.$2 ?
-                            (window.innerHeight * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
-                            window.innerHeight * (RegExp.$1 / 100) + 'px';
+            this.targetEl.style.top = RegExp.$2 ?
+                (window.innerHeight * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
+                window.innerHeight * (RegExp.$1 / 100) + 'px';
         } else if (/^(\d+)\.?(\d*)px$/.test(y) ) { // 像素px
-            this.targetEl.style.top =   RegExp.$2 ?
-                            ((RegExp.$1 + '.' + RegExp.$2) + 'px') :
-                            (RegExp.$1 + 'px');
+            this.targetEl.style.top = RegExp.$2 ?
+                ((RegExp.$1 + '.' + RegExp.$2) + 'px') :
+                (RegExp.$1 + 'px');
         } else if (!isNaN(Number(y)) ) { // 纯数字
             this.targetEl.style.top = y + 'px';
         } else if (y.toLowerCase() == 'top') { // 'top'

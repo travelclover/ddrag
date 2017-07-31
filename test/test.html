@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>dragTest</title>
+  <style>
+    .div1{
+      background: red;
+      width: 100px;
+      height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <button onclick="reset()">reset</button>
+  <div class="div1"></div>
+
+  <script src="../ddrag.js"></script>
+  <script>
+  var div1 = new Ddrag({
+    el: '.div1',
+    marginLeft: '0',
+    marginTop: '0',
+    marginRight: '-9999999',
+    marginBottom: '-99999999',
+    afterDrag: function () {
+      console.log(div1.top)
+      console.log(div1.left)
+    },
+    draging: function (event) {
+      console.log(event)
+    }
+  })
+
+  function reset () {
+    div1.set({
+      positionX: 'center',
+      positionY: 'middle',
+      afterDrag: function (e) {
+        console.log('afterDrag已改变')
+        console.log(e)
+      },
+      draging: null
+    })
+  }
+  </script>
+</body>
+</html>
