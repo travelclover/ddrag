@@ -4,9 +4,11 @@
 非常方便实现拖拽，只需要一句js代码
 
 安装
+
 	npm install ddrag --save;
 
 初始化
+
 	var option = {
 		el: '#myDrag', // 必填项，传入id或者类名，'.myDrag', 拖拽区域元素
 		targetEl: '#parent', // 可选项，实际拖拽元素，默认为 el。此元素必须是 el 的父元素， 或者是 el 元素自身
@@ -24,6 +26,7 @@
 
 
 初始化后可通过 set 方法改变初始化时的参数：
+
 	myDdrag.set({
 		marginLeft: '20px',
 		positionX: '10px',
@@ -33,5 +36,6 @@
 
 
 可通过以下属性获得拖拽对象的信息:
+
 	myDdrag.top; // 100, 拖拽对象距窗口顶边的距离
 	myDdrag.left; // 100, 拖拽对象距窗口左边的距离
