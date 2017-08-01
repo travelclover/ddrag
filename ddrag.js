@@ -4,8 +4,8 @@
  * {
  *      el                  :   拖拽区域元素,
  *      targetEl            :   实际被拖动元素,
- *      positionX           :   距左边位置,
- *      positionY           :   距上边位置,
+ *      left                :   距左边位置,
+ *      top                 :   距上边位置,
  *      zIndex              :   DOM的z-index值,
  *      marginLeft          :   拖拽距离左边的边界值,
  *      marginTop           :   拖拽距离上边的边界值,
@@ -38,6 +38,8 @@ function Ddrag (option) {
         console.dir(this.targetEl)
         console.log('targetEl.clientWidth: ' + this.targetEl.clientWidth)
     }
+    this.lastTop = this.targetEl.offsetTop;
+    this.lastLeft = this.targetEl.offsetLeft;
     this.el.style.cursor = 'move';
     this.targetEl.style.position = 'fixed';
     this.targetEl.style.margin = '0'; // 设置margin值为0
@@ -51,20 +53,22 @@ function Ddrag (option) {
 
     /**
      * 初始位置
-     * option.positionX
-     * option.positionY
+     * option.left
+     * option.top
      * @type {String}
      */
-    if (typeof option.positionX == 'undefined') { // 没有 positionX 属性 设置默认值 居中
+    if (typeof option.left == 'undefined') { // 没有 left 属性 设置默认值 居中
         this.targetEl.style.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
-    } else { // 有 positionX 属性
-        setPositionX(option.positionX);
+        this.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2);
+    } else { // 有 left 属性
+        setPositionX(option.left);
     }
 
-    if (typeof option.positionY == 'undefined') { // 没有 positionY 属性 设置默认值 0px
+    if (typeof option.top == 'undefined') { // 没有 top 属性 设置默认值 0px
         this.targetEl.style.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
+        this.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2);
     } else {
-        setPositionY(option.positionY);
+        setPositionY(option.top);
     }
 
     /**
@@ -119,10 +123,16 @@ function Ddrag (option) {
      * 添加mousedown事件
      */
     this.el.onmousedown = (e) => {
+        var firstMove = true; // 该次拖拽的首次移动标记
         // 记录鼠标相对 el 的位置
         var distance_X = e.x - this.targetEl.offsetLeft; // 鼠标相对于 el 的 X 距离
         var distance_Y = e.y - this.targetEl.offsetTop; // 鼠标相对于 el 的 Y 距离 dragMove(distance_X,distance_Y,event)
         document.onmousemove = (e) => {
+            if (firstMove) {
+                this.lastTop = this.top;
+                this.lastLeft = this.left;
+                firstMove = false;
+            }
             var setX;
             var setY;
             setX = e.x - distance_X;
@@ -187,8 +197,8 @@ function Ddrag (option) {
      *                      marginRight,
      *                      marginTop,
      *                      marginBottom,
-     *                      positionX,
-     *                      positionY
+     *                      left,
+     *                      top
      *                  }
      * @return {[type]}     [description]
      */
@@ -214,11 +224,11 @@ function Ddrag (option) {
             settings.marginBottom :
             parseInt(opt.marginBottom);
 
-        if (typeof opt.positionX !== 'undefined') {
-            setPositionX(opt.positionX)
+        if (typeof opt.left !== 'undefined') {
+            setPositionX(opt.left)
         }
-        if (typeof opt.positionY !== 'undefined') {
-            setPositionY(opt.positionY)
+        if (typeof opt.top !== 'undefined') {
+            setPositionY(opt.top)
         }
 
         if (typeof opt.draging !== 'undefined') {
@@ -235,28 +245,40 @@ function Ddrag (option) {
      * @return {[type]}        [description]
      */
     function setX(x) {
+        this.lastLeft = this.left;
         if (/^(\d+)\.?(\d*)%$/.test(x) ) { // 百分比
             this.targetEl.style.left = RegExp.$2 ?
                 (window.innerWidth * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
                 window.innerWidth * (RegExp.$1 / 100) + 'px';
+            this.left = RegExp.$2 ?
+                window.innerWidth * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) :
+                window.innerWidth * (RegExp.$1 / 100);
         } else if (/^(\d+)\.?(\d*)px$/.test(x) ) { // 像素px
             this.targetEl.style.left = RegExp.$2 ?
                 ((RegExp.$1 + '.' + RegExp.$2) + 'px') :
                 (RegExp.$1 + 'px');
+            this.left = RegExp.$2 ?
+                (RegExp.$1 + '.' + RegExp.$2) :
+                RegExp.$1;
         } else if (!isNaN(Number(x)) ) { // 纯数字
             this.targetEl.style.left = x + 'px';
+            this.left = x;
         } else if (x.toLowerCase() == 'left') { // 'left'
             this.targetEl.style.left = '0px';
+            this.left = 0;
         } else if (x.toLowerCase() == 'center') { // 'center'
             this.targetEl.style.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
+            this.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2);
             console.log(this.targetEl.clientWidth)
             console.dir(this.targetEl)
         } else if (x.toLowerCase() == 'right') { // 'right'
             this.targetEl.style.left = (window.innerWidth - this.targetEl.clientWidth) + 'px';
+            this.left = (window.innerWidth - this.targetEl.clientWidth);
             console.log(this.targetEl.clientWidth)
         } else {
-            console.error('Err: "'+ option.el + '" positionX is error');
+            console.error('Err: "'+ option.el + '" left is error');
             this.targetEl.style.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
+            this.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2);
         }
     }
     /**
@@ -265,27 +287,39 @@ function Ddrag (option) {
      * @return {[type]}        [description]
      */
     function setY(y) {
+        this.lastTop = this.top;
         if (/^(\d+)\.?(\d*)%$/.test(y) ) { // 百分比
             this.targetEl.style.top = RegExp.$2 ?
                 (window.innerHeight * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
                 window.innerHeight * (RegExp.$1 / 100) + 'px';
+            this.top = RegExp.$2 ?
+                window.innerHeight * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) :
+                window.innerHeight * (RegExp.$1 / 100);
         } else if (/^(\d+)\.?(\d*)px$/.test(y) ) { // 像素px
             this.targetEl.style.top = RegExp.$2 ?
                 ((RegExp.$1 + '.' + RegExp.$2) + 'px') :
                 (RegExp.$1 + 'px');
+            this.top = RegExp.$2 ?
+                (RegExp.$1 + '.' + RegExp.$2) :
+                RegExp.$1;
         } else if (!isNaN(Number(y)) ) { // 纯数字
             this.targetEl.style.top = y + 'px';
+            this.top = y;
         } else if (y.toLowerCase() == 'top') { // 'top'
             this.targetEl.style.top = '0px';
+            this.top = 0;
         } else if (y.toLowerCase() == 'middle') { // 'middle'
             this.targetEl.style.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
+            this.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2);
         } else if (y.toLowerCase() == 'bottom') { // 'bottom'
             this.targetEl.style.top = (window.innerHeight - this.targetEl.clientHeight) + 'px';
+            this.top = (window.innerHeight - this.targetEl.clientHeight);
         } else {
-            console.error('Err: "'+ option.el + '" positionY is error');
+            console.error('Err: "'+ option.el + '" top is error');
             this.targetEl.style.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
+            this.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2);
         }
     }
 }
 
-export default Ddrag
+// export default Ddrag
