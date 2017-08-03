@@ -11,6 +11,7 @@
  *      marginTop           :   拖拽距离上边的边界值,
  *      marginRight         :   拖拽距离右边的边界值,
  *      marginBottom        :   拖拽距离下边的边界值,
+ *      stop                :   是否禁止拖拽,
  *      draging             :   拖拽中的回调函数,
  *      afterDrag           :   拖动后的回调函数(function)
  * }
@@ -84,6 +85,7 @@ function Ddrag (option) {
      * option.marginTop         距左边的距离
      * option.marginRight       距右边的距离
      * option.marginBottom      距底边的距离
+     * option.stop              是否禁止拖拽
      */
     var settings = {};
     if (typeof option.marginLeft == 'undefined') {
@@ -106,6 +108,7 @@ function Ddrag (option) {
     } else {
         settings.marginBottom = isNaN(parseInt(option.marginBottom)) ? 0 : parseInt(option.marginBottom);
     }
+    settings.stop = typeof option.stop == 'undefined' ? false : Boolean(option.stop);
 
     /**
      * 回调函数
@@ -123,6 +126,7 @@ function Ddrag (option) {
      * 添加mousedown事件
      */
     this.el.onmousedown = (e) => {
+        if (settings.stop) return
         var firstMove = true; // 该次拖拽的首次移动标记
         // 记录鼠标相对 el 的位置
         var distance_X = e.x - this.targetEl.offsetLeft; // 鼠标相对于 el 的 X 距离
@@ -223,6 +227,9 @@ function Ddrag (option) {
             isNaN(parseInt(opt.marginBottom)) ?
             settings.marginBottom :
             parseInt(opt.marginBottom);
+        settings.stop = typeof opt.stop === 'undefined' ?
+            settings.stop :
+            Boolean(opt.stop);
 
         if (typeof opt.left !== 'undefined') {
             setPositionX(opt.left)
@@ -237,6 +244,23 @@ function Ddrag (option) {
         if (typeof opt.afterDrag !== 'undefined') {
             afterDrag = opt.afterDrag;
         }
+    }
+
+    /**
+     * 销毁
+     * @param  {Boolean} regain 是否恢复原始状态
+     * @return {[type]}        [description]
+     */
+    this.destroy = (regain) => {
+        this.el.onmousedown = null;
+        if (typeof regain === 'boolean' && regain) {
+            this.targetEl.style.position = 'static';
+            this.targetEl.style.left = '0';
+            this.targetEl.style.top = '0';
+        }
+        this.el.style.cursor = 'auto';
+        var destroyObj = this;
+        destroyObj = null
     }
 
     /**
@@ -322,4 +346,4 @@ function Ddrag (option) {
     }
 }
 
-// export default Ddrag
+export default Ddrag

@@ -19,6 +19,7 @@
 		marginTop: '20', // 可选项，拖拽距离上边的边界值
 		marginRight: '10', // 可选项，拖拽距离右边的边界值
 		marginBottom: '20px', // 可选项，拖拽距离下边的边界值
+		stop: false, // 可选项，是否暂时禁止拖拽，默认false,为true时，拖拽功能失效
 		draging: function () {}, // 可选项，拖拽中的回调函数
 		afterDrag: function () {}, // 可选项，每次拖拽后的回调函数
 	}
@@ -30,6 +31,7 @@
 	myDdrag.set({
 		marginLeft: '20px',
 		left: '10px',
+		stop: true, // 暂时禁止拖拽功能
 		draging: false, // false 可以取消对应的回调函数
 		afterDrag: function () {}
 	})
@@ -41,3 +43,9 @@
 	myDdrag.left; // 100, 拖拽对象距窗口左边的距离
 	myDdrag.lastTop; // 拖拽对象上一次位置距窗口顶边的距离
 	myDdrag.lastLeft; // 拖拽对象上一次位置距窗口左边的距离
+
+
+可通过destroy方法来销毁:
+
+	myDdrag.destroy() // DOM 对象将保持销毁前的位置
+	myDdrag.destory(true) // DOM 对象回到原始的文档流中

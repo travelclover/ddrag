@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <title>dragTest</title>
   <style>
-    .div1{
+    .div1, .div2{
       background: red;
       width: 100px;
       height: 50px;
@@ -13,7 +13,12 @@
 </head>
 <body>
   <button onclick="reset()">reset</button>
-  <div class="div1"></div>
+  <button onclick="stopDrag()">停止拖拽div1</button>
+  <button onclick="continueDrag()">回复拖拽div1</button>
+  <button onclick="destroy()">销毁拖拽div1</button>
+
+  <div class="div1">div1</div>
+  <div class="div2" style="background: yellow;">div2</div>
 
   <script src="../ddrag.js"></script>
   <script>
@@ -32,6 +37,12 @@
     }
   })
 
+  var div2 = new Ddrag({
+    el: '.div2',
+    left: 100,
+    top: 100
+  })
+
   function reset () {
     div1.set({
       left: 'center',
@@ -42,6 +53,22 @@
       },
       draging: null
     })
+  }
+
+  function stopDrag () {
+    div1.set({
+      stop: true
+    })
+  }
+
+  function continueDrag () {
+    div1.set({
+      stop: false
+    })
+  }
+
+  function destroy () {
+    div1.destroy(true)
   }
   </script>
 </body>
