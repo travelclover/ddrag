@@ -44,8 +44,8 @@ function Ddrag (option) {
     this.el.style.cursor = 'move';
     this.targetEl.style.position = 'fixed';
     this.targetEl.style.margin = '0'; // 设置margin值为0
-    console.dir(this.el)
-    console.dir(this.targetEl)
+    // console.dir(this.el)
+    // console.dir(this.targetEl)
     this.top = this.targetEl.style.top;
     this.left = this.targetEl.style.left;
 
@@ -122,58 +122,84 @@ function Ddrag (option) {
         afterDrag = option.afterDrag;
     }
 
-    /**
-     * 添加mousedown事件
-     */
-    this.el.onmousedown = (e) => {
+    var firstMove, // 某次拖拽的第一次拖动
+        distance_X, // 鼠标相对于 el 的 X 距离
+        distance_Y;
+    var mouseDown = (e) => {
         if (settings.stop) return
-        var firstMove = true; // 该次拖拽的首次移动标记
-        // 记录鼠标相对 el 的位置
-        var distance_X = e.x - this.targetEl.offsetLeft; // 鼠标相对于 el 的 X 距离
-        var distance_Y = e.y - this.targetEl.offsetTop; // 鼠标相对于 el 的 Y 距离 dragMove(distance_X,distance_Y,event)
-        document.onmousemove = (e) => {
-            if (firstMove) {
-                this.lastTop = this.top;
-                this.lastLeft = this.left;
-                firstMove = false;
-            }
-            var setX;
-            var setY;
-            setX = e.x - distance_X;
-            setY = e.y - distance_Y;
-            if (setX < settings.marginLeft) {
-                this.targetEl.style.left = settings.marginLeft + 'px';
-                this.left = settings.marginLeft;
-            } else if (window.innerWidth - setX - this.targetEl.clientWidth < settings.marginRight) {
-                this.targetEl.style.left = window.innerWidth - this.targetEl.clientWidth - settings.marginRight + 'px';
-                this.left = window.innerWidth - this.targetEl.clientWidth - settings.marginRight;
-            } else {
-                this.targetEl.style.left = setX + 'px';
-                this.left = setX;
-            }
-            if (setY < settings.marginTop) {
-                this.targetEl.style.top = settings.marginTop + 'px';
-                this.top = settings.marginTop;
-            } else if (window.innerHeight - setY - this.targetEl.clientHeight < settings.marginBottom) {
-                this.targetEl.style.top = window.innerHeight - this.targetEl.clientHeight - settings.marginBottom + 'px';
-                this.top = window.innerHeight - this.targetEl.clientHeight - settings.marginBottom;
-            } else {
-                this.targetEl.style.top = setY + 'px';
-                this.top = setY;
-            }
+        firstMove = true; // 该次拖拽的首次移动标记
 
-            if (draging) {
-                draging(e)
-            }
-        }
-        document.onmouseup = (e) => {
-            document.onmousemove = null;
-            document.onmouseup = null;
-            if (afterDrag) {
-                afterDrag(e);
-            }
+        // 判断是否是移动端
+        if (_isMobileDevice()) {
+            // 记录触摸位置相对 el 的位置
+            distance_X = e.touches[0].pageX - this.targetEl.offsetLeft;
+            distance_Y = e.touches[0].pageY - this.targetEl.offsetTop;
+            document.addEventListener('touchmove', mouseMove, false);
+            document.addEventListener('touchend', mouseUp, false)
+        } else {
+            // 记录鼠标相对 el 的位置
+            distance_X = e.x - this.targetEl.offsetLeft; // 鼠标相对于 el 的 X 距离
+            distance_Y = e.y - this.targetEl.offsetTop; // 鼠标相对于 el 的 Y 距离 dragMove(distance_X,distance_Y,event)
+            document.onmousemove = mouseMove;
+            document.onmouseup = mouseUp;
         }
         return false
+    }
+    var mouseMove = (e) => {
+        if (firstMove) {
+            this.lastTop = this.top;
+            this.lastLeft = this.left;
+            firstMove = false;
+        }
+        var setX;
+        var setY;
+        setX = _isMobileDevice() ? e.touches[0].pageX - distance_X : e.x - distance_X;
+        setY = _isMobileDevice() ? e.touches[0].pageY - distance_Y : e.y - distance_Y;
+        if (setX < settings.marginLeft) {
+            this.targetEl.style.left = settings.marginLeft + 'px';
+            this.left = settings.marginLeft;
+        } else if (window.innerWidth - setX - this.targetEl.clientWidth < settings.marginRight) {
+            this.targetEl.style.left = window.innerWidth - this.targetEl.clientWidth - settings.marginRight + 'px';
+            this.left = window.innerWidth - this.targetEl.clientWidth - settings.marginRight;
+        } else {
+            this.targetEl.style.left = setX + 'px';
+            this.left = setX;
+        }
+        if (setY < settings.marginTop) {
+            this.targetEl.style.top = settings.marginTop + 'px';
+            this.top = settings.marginTop;
+        } else if (window.innerHeight - setY - this.targetEl.clientHeight < settings.marginBottom) {
+            this.targetEl.style.top = window.innerHeight - this.targetEl.clientHeight - settings.marginBottom + 'px';
+            this.top = window.innerHeight - this.targetEl.clientHeight - settings.marginBottom;
+        } else {
+            this.targetEl.style.top = setY + 'px';
+            this.top = setY;
+        }
+        // 拖动中的回调函数
+        if (draging) {
+            draging(e)
+        }
+    }
+    var mouseUp = (e) => {
+        if (_isMobileDevice()) {
+            document.removeEventListener('touchmove', mouseMove);
+            document.removeEventListener('touchend', mouseUp);
+        } else {
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+        // 拖拽完的回调函数
+        if (afterDrag) {
+            afterDrag(e);
+        }
+    }
+
+    // 判断是否是移动端
+    if (_isMobileDevice()) {
+        this.el.removeEventListener('touchstart', mouseDown); // 清除已有的事件
+        this.el.addEventListener('touchstart', mouseDown, false);
+    } else {
+        this.el.onmousedown = mouseDown;
     }
 
     // 阻止右键菜单
@@ -343,6 +369,36 @@ function Ddrag (option) {
             this.targetEl.style.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
             this.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2);
         }
+    }
+}
+
+/**
+ * 判断是否是移动端设备
+ * @return {Boolean} 返回 true | false
+ */
+function _isMobileDevice () {
+    var _devices = navigator.userAgent.toLowerCase();
+    var bIsIpad = _devices.match(/ipad/i) == 'ipad';
+    var bIsIphoneOs = _devices.match(/iphone os/i) == 'iphone os';
+    var bIsMidp = _devices.match(/midp/i) == 'midp';
+    var bIsUc7 = _devices.match(/rv:1.2.3.4/i) == 'rv:1.2.3.4';
+    var bIsUc = _devices.match(/ucweb/i) == 'ucweb';
+    var bIsAndroid = _devices.match(/android/i) == 'android';
+    var bIsCE = _devices.match(/windows ce/i) == 'windows ce';
+    var bIsWM = _devices.match(/windows mobile/i) == 'windows mobile';
+    if (bIsIpad ||
+        bIsIphoneOs ||
+        bIsMidp ||
+        bIsUc7 ||
+        bIsUc ||
+        bIsAndroid ||
+        bIsCE ||
+        bIsWM) {
+        // 移动端
+        return true
+    } else {
+        // pc 端
+        return false
     }
 }
 

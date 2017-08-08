@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   <title>dragTest</title>
   <style>
     .div1, .div2{
@@ -14,7 +15,7 @@
 <body>
   <button onclick="reset()">reset</button>
   <button onclick="stopDrag()">停止拖拽div1</button>
-  <button onclick="continueDrag()">回复拖拽div1</button>
+  <button onclick="continueDrag()">恢复拖拽div1</button>
   <button onclick="destroy()">销毁拖拽div1</button>
 
   <div class="div1">div1</div>
@@ -22,6 +23,11 @@
 
   <script src="../ddrag.js"></script>
   <script>
+  // 解决在移动端拖拽DOM对象时页面上下滑动的问题
+  document.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+  })
+
   var div1 = new Ddrag({
     el: '.div1',
     marginLeft: '0',
@@ -33,7 +39,7 @@
       console.log(div1.left)
     },
     draging: function (event) {
-      console.log(event)
+      // console.log(event)
     }
   })
 
