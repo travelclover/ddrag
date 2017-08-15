@@ -13,7 +13,8 @@
  *      marginBottom        :   拖拽距离下边的边界值,
  *      stop                :   是否禁止拖拽,
  *      draging             :   拖拽中的回调函数,
- *      afterDrag           :   拖动后的回调函数(function)
+ *      afterDrag           :   拖动后的回调函数(function),
+ *      cursor              :   鼠标放在可拖拽区域中的样式
  * }
  *
  * @return {[type]}        [description]
@@ -41,7 +42,6 @@ function Ddrag (option) {
     }
     this.lastTop = this.targetEl.offsetTop;
     this.lastLeft = this.targetEl.offsetLeft;
-    this.el.style.cursor = 'move';
     this.targetEl.style.position = 'fixed';
     this.targetEl.style.margin = '0'; // 设置margin值为0
     // console.dir(this.el)
@@ -79,6 +79,9 @@ function Ddrag (option) {
     if (option.zIndex) {
         this.targetEl.style.zIndex = option.zIndex;
     }
+
+    // 设置光标形状
+    this.el.style.cursor = typeof option.cursor === 'undefined' ? 'move' : option.cursor;
 
     /**
      * option.marginLeft        距上边的距离
@@ -402,4 +405,4 @@ function _isMobileDevice () {
     }
 }
 
-export default Ddrag
+// export default Ddrag
