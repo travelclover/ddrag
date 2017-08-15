@@ -2,10 +2,16 @@
 一个快速实现拖拽功能的插件
 
 非常方便实现拖拽，只需要一句js代码
+也可在移动端中使用
 
 安装
 
 	npm install ddrag --save;
+
+引入
+```javascript
+import Ddrag from 'ddrag'
+```
 
 初始化
 ```javascript
@@ -22,6 +28,7 @@ var option = {
 	stop: false, // 可选项，是否暂时禁止拖拽，默认false,为true时，拖拽功能失效
 	draging: function () {}, // 可选项，拖拽中的回调函数
 	afterDrag: function () {}, // 可选项，每次拖拽后的回调函数
+	cursor: 'pointer', // 可选项，鼠标放在可拖拽区域中时的光标形状，默认为 move
 }
 var myDdrag = new Ddrag(option);
 ```
