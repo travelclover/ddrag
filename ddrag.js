@@ -405,4 +405,4 @@ function _isMobileDevice () {
     }
 }
 
-export default Ddrag
+// export default Ddrag
