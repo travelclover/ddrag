@@ -123,9 +123,9 @@
   <script src="../ddrag.js"></script>
   <script>
   // 解决在移动端拖拽DOM对象时页面上下滑动的问题
-  // document.addEventListener('touchmove', function (e) {
-  //   e.preventDefault();
-  // })
+  document.addEventListener('touchmove', function (e) {
+    e.preventDefault();
+  })
 
   var div1 = new Ddrag({
     el: '.div1',
