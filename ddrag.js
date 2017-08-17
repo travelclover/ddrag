@@ -40,14 +40,19 @@ function Ddrag (option) {
         console.dir(this.targetEl)
         console.log('targetEl.clientWidth: ' + this.targetEl.clientWidth)
     }
-    this.lastTop = this.targetEl.offsetTop;
-    this.lastLeft = this.targetEl.offsetLeft;
-    this.targetEl.style.position = 'fixed';
+    var targetEl_rect = this.targetEl.getBoundingClientRect();
+    this.lastTop = document.documentElement.scrollTop + targetEl_rect.top;
+    this.lastLeft = document.documentElement.scrollTop + targetEl_rect.left;
     this.targetEl.style.margin = '0'; // 设置margin值为0
     // console.dir(this.el)
     // console.dir(this.targetEl)
-    this.top = this.targetEl.style.top;
-    this.left = this.targetEl.style.left;
+
+    // 把拖拽对象移到 body 下
+    _removeElement(this.targetEl);
+    document.body.appendChild(this.targetEl);
+
+    // 设置为 absolute 定位
+    this.targetEl.style.position = 'absolute';
 
     var setPositionX = setX.bind(this);
     var setPositionY = setY.bind(this);
@@ -59,15 +64,15 @@ function Ddrag (option) {
      * @type {String}
      */
     if (typeof option.left == 'undefined') { // 没有 left 属性 设置默认值 居中
-        this.targetEl.style.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
-        this.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2);
+        this.targetEl.style.left = this.lastLeft + 'px';
+        this.left = this.lastLeft;
     } else { // 有 left 属性
         setPositionX(option.left);
     }
 
     if (typeof option.top == 'undefined') { // 没有 top 属性 设置默认值 0px
-        this.targetEl.style.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
-        this.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2);
+        this.targetEl.style.top = this.lastTop + 'px';
+        this.top = this.lastTop;
     } else {
         setPositionY(option.top);
     }
@@ -161,9 +166,9 @@ function Ddrag (option) {
         if (setX < settings.marginLeft) {
             this.targetEl.style.left = settings.marginLeft + 'px';
             this.left = settings.marginLeft;
-        } else if (window.innerWidth - setX - this.targetEl.clientWidth < settings.marginRight) {
-            this.targetEl.style.left = window.innerWidth - this.targetEl.clientWidth - settings.marginRight + 'px';
-            this.left = window.innerWidth - this.targetEl.clientWidth - settings.marginRight;
+        } else if (document.documentElement.scrollWidth - setX - this.targetEl.clientWidth < settings.marginRight) {
+            this.targetEl.style.left = document.documentElement.scrollWidth - this.targetEl.clientWidth - settings.marginRight + 'px';
+            this.left = document.documentElement.scrollWidth - this.targetEl.clientWidth - settings.marginRight;
         } else {
             this.targetEl.style.left = setX + 'px';
             this.left = setX;
@@ -171,9 +176,9 @@ function Ddrag (option) {
         if (setY < settings.marginTop) {
             this.targetEl.style.top = settings.marginTop + 'px';
             this.top = settings.marginTop;
-        } else if (window.innerHeight - setY - this.targetEl.clientHeight < settings.marginBottom) {
-            this.targetEl.style.top = window.innerHeight - this.targetEl.clientHeight - settings.marginBottom + 'px';
-            this.top = window.innerHeight - this.targetEl.clientHeight - settings.marginBottom;
+        } else if (document.documentElement.scrollHeight - setY - this.targetEl.clientHeight < settings.marginBottom) {
+            this.targetEl.style.top = document.documentElement.scrollHeight - this.targetEl.clientHeight - settings.marginBottom + 'px';
+            this.top = document.documentElement.scrollHeight - this.targetEl.clientHeight - settings.marginBottom;
         } else {
             this.targetEl.style.top = setY + 'px';
             this.top = setY;
@@ -267,6 +272,14 @@ function Ddrag (option) {
             setPositionY(opt.top)
         }
 
+        if (typeof opt.zIndex !== 'undefined') {
+            this.targetEl.style.zIndex = opt.zIndex;
+        }
+
+        if (typeof opt.cursor !== 'undefined') {
+            this.el.style.cursor = opt.cursor;
+        }
+
         if (typeof opt.draging !== 'undefined') {
             draging = opt.draging;
         }
@@ -301,11 +314,11 @@ function Ddrag (option) {
         this.lastLeft = this.left;
         if (/^(\d+)\.?(\d*)%$/.test(x) ) { // 百分比
             this.targetEl.style.left = RegExp.$2 ?
-                (window.innerWidth * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
-                window.innerWidth * (RegExp.$1 / 100) + 'px';
+                (document.documentElement.scrollWidth * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
+                document.documentElement.scrollWidth * (RegExp.$1 / 100) + 'px';
             this.left = RegExp.$2 ?
-                window.innerWidth * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) :
-                window.innerWidth * (RegExp.$1 / 100);
+                document.documentElement.scrollWidth * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) :
+                document.documentElement.scrollWidth * (RegExp.$1 / 100);
         } else if (/^(\d+)\.?(\d*)px$/.test(x) ) { // 像素px
             this.targetEl.style.left = RegExp.$2 ?
                 ((RegExp.$1 + '.' + RegExp.$2) + 'px') :
@@ -320,18 +333,18 @@ function Ddrag (option) {
             this.targetEl.style.left = '0px';
             this.left = 0;
         } else if (x.toLowerCase() == 'center') { // 'center'
-            this.targetEl.style.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
-            this.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2);
+            this.targetEl.style.left = (document.documentElement.scrollWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
+            this.left = (document.documentElement.scrollWidth / 2 - this.targetEl.clientWidth / 2);
             console.log(this.targetEl.clientWidth)
             console.dir(this.targetEl)
         } else if (x.toLowerCase() == 'right') { // 'right'
-            this.targetEl.style.left = (window.innerWidth - this.targetEl.clientWidth) + 'px';
-            this.left = (window.innerWidth - this.targetEl.clientWidth);
+            this.targetEl.style.left = (document.documentElement.scrollWidth - this.targetEl.clientWidth) + 'px';
+            this.left = (document.documentElement.scrollWidth - this.targetEl.clientWidth);
             console.log(this.targetEl.clientWidth)
         } else {
             console.error('Err: "'+ option.el + '" left is error');
-            this.targetEl.style.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
-            this.left = (window.innerWidth / 2 - this.targetEl.clientWidth / 2);
+            this.targetEl.style.left = (document.documentElement.scrollWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
+            this.left = (document.documentElement.scrollWidth / 2 - this.targetEl.clientWidth / 2);
         }
     }
     /**
@@ -343,11 +356,11 @@ function Ddrag (option) {
         this.lastTop = this.top;
         if (/^(\d+)\.?(\d*)%$/.test(y) ) { // 百分比
             this.targetEl.style.top = RegExp.$2 ?
-                (window.innerHeight * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
-                window.innerHeight * (RegExp.$1 / 100) + 'px';
+                (document.documentElement.scrollHeight * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) + 'px' ) :
+                document.documentElement.scrollHeight * (RegExp.$1 / 100) + 'px';
             this.top = RegExp.$2 ?
-                window.innerHeight * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) :
-                window.innerHeight * (RegExp.$1 / 100);
+                document.documentElement.scrollHeight * (Number(RegExp.$1 + '.' + RegExp.$2) / 100) :
+                document.documentElement.scrollHeight * (RegExp.$1 / 100);
         } else if (/^(\d+)\.?(\d*)px$/.test(y) ) { // 像素px
             this.targetEl.style.top = RegExp.$2 ?
                 ((RegExp.$1 + '.' + RegExp.$2) + 'px') :
@@ -362,15 +375,15 @@ function Ddrag (option) {
             this.targetEl.style.top = '0px';
             this.top = 0;
         } else if (y.toLowerCase() == 'middle') { // 'middle'
-            this.targetEl.style.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
-            this.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2);
+            this.targetEl.style.top = (document.documentElement.scrollHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
+            this.top = (document.documentElement.scrollHeight / 2 - this.targetEl.clientHeight / 2);
         } else if (y.toLowerCase() == 'bottom') { // 'bottom'
-            this.targetEl.style.top = (window.innerHeight - this.targetEl.clientHeight) + 'px';
-            this.top = (window.innerHeight - this.targetEl.clientHeight);
+            this.targetEl.style.top = (document.documentElement.scrollHeight - this.targetEl.clientHeight) + 'px';
+            this.top = (document.documentElement.scrollHeight - this.targetEl.clientHeight);
         } else {
             console.error('Err: "'+ option.el + '" top is error');
-            this.targetEl.style.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
-            this.top = (window.innerHeight / 2 - this.targetEl.clientHeight / 2);
+            this.targetEl.style.top = (document.documentElement.scrollHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
+            this.top = (document.documentElement.scrollHeight / 2 - this.targetEl.clientHeight / 2);
         }
     }
 }
@@ -402,6 +415,18 @@ function _isMobileDevice () {
     } else {
         // pc 端
         return false
+    }
+}
+
+/**
+ * 从父节点中移除该节点
+ * @param  {object} _element 需要删除的节点
+ * @return {[type]}          [description]
+ */
+function _removeElement (_element) {
+    var _parentElement = _element.parentNode;
+    if (_parentElement) {
+        _parentElement.removeChild(_element);
     }
 }
 
