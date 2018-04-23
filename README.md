@@ -4,6 +4,9 @@
 非常方便实现拖拽，只需要一句js代码
 也可在移动端中使用
 
+## demo
+[查看demo](https://travelclover.github.io/ddrag/)
+
 安装
 
 	npm install ddrag --save;
