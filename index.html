@@ -1,110 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
-  <title>dragTest</title>
-  <style>
-    body{
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ddrag example</title>
+  <style lang="">
+    * {
       margin: 0;
+      padding: 0;
     }
-    .div1, .div2{
-      background: red;
-      width: 100px;
-      height: 50px;
-    }
-    .table{
-      width: 200px;
-      height: 200px;
-      border: 1px solid #000;
-      margin: 100px auto;
+
+    .card {
+      box-shadow: 0 1px 6px rgba(0, 0, 0, .2);
+      border-color: #eee;
+      border: 1px solid #dddee1;
+      background: #fff;
+      border-radius: 4px;
+      font-size: 14px;
       position: relative;
+      width: 200px;
+    }
+
+    .title {
+      border-bottom: 1px solid #e9eaec;
+      padding: 14px 16px;
+      line-height: 1;
+      background: #ccc;
+    }
+
+    .content {
+      padding: 16px;
     }
   </style>
 </head>
-<body>
-  <button onclick="reset()">reset</button>
-  <button onclick="stopDrag()">停止拖拽div1</button>
-  <button onclick="continueDrag()">恢复拖拽div1</button>
-  <button onclick="destroy()" style="width:1500px;">销毁拖拽div1</button>
 
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <div class="table">
-    <div class="div1">div1</div>
+<body>
+
+  <div class="card" id="div1">
+    <div class="title" id="div1_title">
+      <p>拖动区域</p>
+    </div>
+    <div class="content">
+      <p>上边界值：<span id="div1_marginTop">0</span></p>
+      <p>下边界值：<span id="div1_marginBottom">100px</span></p>
+      <p>左边界值：<span id="div1_marginLeft">0</span></p>
+      <p>右边界值：<span id="div1_marginRight">10px</span></p>
+      <p>距上：<span id="div1_top"></span></p>
+      <p>距左：<span id="div1_left"></span></p>
+    </div>
   </div>
-  <div class="div2" style="background: yellow;">div2</div>
-  <br>
-  <br>
-  <br>
 
   <script src="./ddrag.js"></script>
   <script>
-  // 解决在移动端拖拽DOM对象时页面上下滑动的问题
-  document.addEventListener('touchmove', function (e) {
-    e.preventDefault();
-  })
-
-  var div1 = new Ddrag({
-    el: '.div1',
-    cursor: 'pointer',
-    marginLeft: '0',
-    marginTop: '0',
-    marginRight: '0',
-    // marginRight: '-99999999',
-    // marginBottom: '-99999999',
-    afterDrag: function () {
-      console.log(div1.top)
-      console.log(div1.left)
-    },
-    draging: function (event) {
-      // console.log(event)
-    }
-  })
-
-  var div2 = new Ddrag({
-    el: '.div2',
-    left: 100,
-    top: 100
-  })
-
-  function reset () {
-    div1.set({
-      left: 'center',
-      top: 'middle',
-      afterDrag: function (e) {
-        console.log('afterDrag已改变')
-        console.log(e)
+    var div1_top = document.getElementById('div1_top');
+    var div1_left = document.getElementById('div1_left');
+    var div1 = new Ddrag({
+      el: '#div1_title',
+      targetEl: '#div1',
+      cursor: 'pointer',
+      marginLeft: '0',
+      marginTop: '0',
+      marginRight: '10px',
+      marginBottom: '100px',
+      afterDrag: function () {
+        div1_top.innerText = div1.top + 'px';
+        div1_left.innerText = div1.left + 'px';
       },
-      draging: null
+      draging: function (event) {
+        // console.log(event)
+        div1_top.innerText = div1.top + 'px';
+        div1_left.innerText = div1.left + 'px';
+      }
     })
-  }
-
-  function stopDrag () {
-    div1.set({
-      stop: true
-    })
-  }
-
-  function continueDrag () {
-    div1.set({
-      stop: false
-    })
-  }
-
-  function destroy () {
-    div1.destroy(true)
-  }
   </script>
 </body>
+
 </html>
