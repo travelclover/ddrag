@@ -20,7 +20,7 @@
       border-radius: 4px;
       font-size: 14px;
       position: relative;
-      width: 200px;
+      width: 400px;
     }
 
     .title {
@@ -43,6 +43,16 @@
       <p>拖动区域</p>
     </div>
     <div class="content">
+      <div>
+        <span>拖动区域光标样式:</span>
+        <label for="cursor_pointer">
+          <input id="cursor_pointer" type="radio" name="cursor" value="pointer" onchange="cursorChanged()" checked>pointer
+        </label>
+        <label for="cursor_move">
+          <input id="cursor_move" type="radio" name="cursor" value="move" onchange="cursorChanged()">move
+        </label>
+      </div>
+      <br>
       <p>上边界值：<span id="div1_marginTop">0</span></p>
       <p>下边界值：<span id="div1_marginBottom">100px</span></p>
       <p>左边界值：<span id="div1_marginLeft">0</span></p>
@@ -56,7 +66,8 @@
   <script>
     var div1_top = document.getElementById('div1_top');
     var div1_left = document.getElementById('div1_left');
-    var div1 = new Ddrag({
+
+    var defaultOption = {
       el: '#div1_title',
       targetEl: '#div1',
       cursor: 'pointer',
@@ -73,7 +84,21 @@
         div1_top.innerText = div1.top + 'px';
         div1_left.innerText = div1.left + 'px';
       }
-    })
+    }
+
+    var div1 = new Ddrag(defaultOption);
+
+    // 拖动区域光标样式改变
+    function cursorChanged() {
+      var cursor = document.getElementsByName("cursor");
+      for (var i = 0; i < cursor.length; i++) {
+        if (cursor[i].checked) {
+          div1.set({
+            cursor: cursor[i].value,
+          });
+        }
+      }
+    }
   </script>
 </body>
 
