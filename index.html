@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>ddrag example</title>
   <style lang="">
@@ -15,7 +15,6 @@
     .card {
       box-shadow: 0 1px 6px rgba(0, 0, 0, .2);
       border-color: #eee;
-      border: 1px solid #dddee1;
       background: #fff;
       border-radius: 4px;
       font-size: 14px;
@@ -33,6 +32,14 @@
     .content {
       padding: 16px;
     }
+
+    .content .row {
+      margin-bottom: 10px;
+    }
+
+    input[type=text] {
+      width: 100px;
+    }
   </style>
 </head>
 
@@ -43,7 +50,7 @@
       <p>拖动区域</p>
     </div>
     <div class="content">
-      <div>
+      <div class="row">
         <span>拖动区域光标样式:</span>
         <label for="cursor_pointer">
           <input id="cursor_pointer" type="radio" name="cursor" value="pointer" onchange="cursorChanged()" checked>pointer
@@ -52,15 +59,40 @@
           <input id="cursor_move" type="radio" name="cursor" value="move" onchange="cursorChanged()">move
         </label>
       </div>
-      <br>
-      <p>上边界值：<span id="div1_marginTop">0</span></p>
-      <p>下边界值：<span id="div1_marginBottom">100px</span></p>
-      <p>左边界值：<span id="div1_marginLeft">0</span></p>
-      <p>右边界值：<span id="div1_marginRight">10px</span></p>
+      <div class="row">
+        <label for="marginTop_input">
+          <span>上边界值:</span>
+          <input id="marginTop_input" type="text"> px
+        </label>
+        <a id="marginTop_input_btn" href="javascript:;">确定</a>
+      </div>
+      <div class="row">
+        <label for="marginBottom_input">
+          <span>下边界值:</span>
+          <input id="marginBottom_input" type="text"> px
+        </label>
+        <a id="marginBottom_input_btn" href="javascript:;">确定</a>
+      </div>
+      <div class="row">
+        <label for="marginLeft_input">
+          <span>左边界值:</span>
+          <input id="marginLeft_input" type="text"> px
+        </label>
+        <a id="marginLeft_input_btn" href="javascript:;">确定</a>
+      </div>
+      <div class="row">
+        <label for="marginRight_input">
+          <span>右边界值:</span>
+          <input id="marginRight_input" type="text"> px
+        </label>
+        <a id="marginRight_input_btn" href="javascript:;">确定</a>
+      </div>
+      <hr>
       <p>距上：<span id="div1_top"></span></p>
       <p>距左：<span id="div1_left"></span></p>
     </div>
   </div>
+
 
   <script src="./ddrag.js"></script>
   <script>
@@ -73,8 +105,8 @@
       cursor: 'pointer',
       marginLeft: '0',
       marginTop: '0',
-      marginRight: '10px',
-      marginBottom: '100px',
+      marginRight: '0px',
+      marginBottom: '0px',
       afterDrag: function () {
         div1_top.innerText = div1.top + 'px';
         div1_left.innerText = div1.left + 'px';
@@ -99,6 +131,74 @@
         }
       }
     }
+
+    // 上边界输入框
+    var marginTopInput = document.getElementById('marginTop_input');
+    var marginTopInputBtn = document.getElementById('marginTop_input_btn');
+    marginTopInputBtn.addEventListener('click', function () {
+      var value, marginTop;
+      if (isNaN(Number(marginTopInput.value))) {
+        value = '';
+        marginTop = 0;
+      } else {
+        marginTop = value = parseInt(marginTopInput.value);
+      }
+      marginTopInput.value = value;
+      div1.set({
+        marginTop: marginTop,
+      });
+    }, false);
+
+    // 下边界输入框
+    var marginBottomInput = document.getElementById('marginBottom_input');
+    var marginBottomInputBtn = document.getElementById('marginBottom_input_btn');
+    marginBottomInputBtn.addEventListener('click', function () {
+      var value, marginBottom;
+      if (isNaN(Number(marginBottomInput.value))) {
+        value = '';
+        marginBottom = 0;
+      } else {
+        marginBottom = value = parseInt(marginBottomInput.value);
+      }
+      marginBottomInput.value = value;
+      div1.set({
+        marginBottom: marginBottom,
+      });
+    }, false);
+
+    // 左边界输入框
+    var marginLeftInput = document.getElementById('marginLeft_input');
+    var marginLeftInputBtn = document.getElementById('marginLeft_input_btn');
+    marginLeftInputBtn.addEventListener('click', function () {
+      var value, marginLeft;
+      if (isNaN(Number(marginLeftInput.value))) {
+        value = '';
+        marginLeft = 0;
+      } else {
+        marginLeft = value = parseInt(marginLeftInput.value);
+      }
+      marginLeftInput.value = value;
+      div1.set({
+        marginLeft: marginLeft,
+      });
+    }, false);
+
+    // 右边界输入框
+    var marginRightInput = document.getElementById('marginRight_input');
+    var marginRightInputBtn = document.getElementById('marginRight_input_btn');
+    marginRightInputBtn.addEventListener('click', function () {
+      var value, marginRight;
+      if (isNaN(Number(marginRightInput.value))) {
+        value = '';
+        marginRight = 0;
+      } else {
+        marginRight = value = parseInt(marginRightInput.value);
+      }
+      marginRightInput.value = value;
+      div1.set({
+        marginRight: marginRight,
+      });
+    }, false);
   </script>
 </body>
 
