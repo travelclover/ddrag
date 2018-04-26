@@ -32,20 +32,15 @@ function Ddrag (option) {
         }
         this.targetEl = document.querySelector(option.targetEl);
         // 判断 el 是否是 targetEl 子孙节点
-        console.log(isParent(this.el,this.targetEl))
         if ( !isParent(this.el, this.targetEl) ) {
             console.error('Err: "' + option.targetEl + '" 不是 "' + option.el + '" 的父元素！');
             return
         }
-        console.dir(this.targetEl)
-        console.log('targetEl.offsetWidth: ' + this.targetEl.offsetWidth)
     }
     var targetEl_rect = this.targetEl.getBoundingClientRect();
     this.lastTop = document.documentElement.scrollTop + targetEl_rect.top;
     this.lastLeft = document.documentElement.scrollTop + targetEl_rect.left;
     this.targetEl.style.margin = '0'; // 设置margin值为0
-    // console.dir(this.el)
-    // console.dir(this.targetEl)
 
     // 把拖拽对象移到 body 下
     _removeElement(this.targetEl);
@@ -335,12 +330,9 @@ function Ddrag (option) {
         } else if (x.toLowerCase() == 'center') { // 'center'
             this.targetEl.style.left = (document.documentElement.scrollWidth / 2 - this.targetEl.offsetWidth / 2) + 'px';
             this.left = (document.documentElement.scrollWidth / 2 - this.targetEl.offsetWidth / 2);
-            console.log(this.targetEl.offsetWidth)
-            console.dir(this.targetEl)
         } else if (x.toLowerCase() == 'right') { // 'right'
             this.targetEl.style.left = (document.documentElement.scrollWidth - this.targetEl.offsetWidth) + 'px';
             this.left = (document.documentElement.scrollWidth - this.targetEl.offsetWidth);
-            console.log(this.targetEl.offsetWidth)
         } else {
             console.error('Err: "'+ option.el + '" left is error');
             this.targetEl.style.left = (document.documentElement.scrollWidth / 2 - this.targetEl.offsetWidth / 2) + 'px';
