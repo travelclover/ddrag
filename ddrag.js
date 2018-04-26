@@ -38,7 +38,7 @@ function Ddrag (option) {
             return
         }
         console.dir(this.targetEl)
-        console.log('targetEl.clientWidth: ' + this.targetEl.clientWidth)
+        console.log('targetEl.offsetWidth: ' + this.targetEl.offsetWidth)
     }
     var targetEl_rect = this.targetEl.getBoundingClientRect();
     this.lastTop = document.documentElement.scrollTop + targetEl_rect.top;
@@ -166,9 +166,9 @@ function Ddrag (option) {
         if (setX < settings.marginLeft) {
             this.targetEl.style.left = settings.marginLeft + 'px';
             this.left = settings.marginLeft;
-        } else if (document.documentElement.scrollWidth - setX - this.targetEl.clientWidth < settings.marginRight) {
-            this.targetEl.style.left = document.documentElement.scrollWidth - this.targetEl.clientWidth - settings.marginRight + 'px';
-            this.left = document.documentElement.scrollWidth - this.targetEl.clientWidth - settings.marginRight;
+        } else if (document.documentElement.scrollWidth - setX - this.targetEl.offsetWidth < settings.marginRight) {
+            this.targetEl.style.left = document.documentElement.scrollWidth - this.targetEl.offsetWidth - settings.marginRight + 'px';
+            this.left = document.documentElement.scrollWidth - this.targetEl.offsetWidth - settings.marginRight;
         } else {
             this.targetEl.style.left = setX + 'px';
             this.left = setX;
@@ -176,9 +176,9 @@ function Ddrag (option) {
         if (setY < settings.marginTop) {
             this.targetEl.style.top = settings.marginTop + 'px';
             this.top = settings.marginTop;
-        } else if (document.documentElement.scrollHeight - setY - this.targetEl.clientHeight < settings.marginBottom) {
-            this.targetEl.style.top = document.documentElement.scrollHeight - this.targetEl.clientHeight - settings.marginBottom + 'px';
-            this.top = document.documentElement.scrollHeight - this.targetEl.clientHeight - settings.marginBottom;
+        } else if (document.documentElement.scrollHeight - setY - this.targetEl.offsetHeight < settings.marginBottom) {
+            this.targetEl.style.top = document.documentElement.scrollHeight - this.targetEl.offsetHeight - settings.marginBottom + 'px';
+            this.top = document.documentElement.scrollHeight - this.targetEl.offsetHeight - settings.marginBottom;
         } else {
             this.targetEl.style.top = setY + 'px';
             this.top = setY;
@@ -333,18 +333,18 @@ function Ddrag (option) {
             this.targetEl.style.left = '0px';
             this.left = 0;
         } else if (x.toLowerCase() == 'center') { // 'center'
-            this.targetEl.style.left = (document.documentElement.scrollWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
-            this.left = (document.documentElement.scrollWidth / 2 - this.targetEl.clientWidth / 2);
-            console.log(this.targetEl.clientWidth)
+            this.targetEl.style.left = (document.documentElement.scrollWidth / 2 - this.targetEl.offsetWidth / 2) + 'px';
+            this.left = (document.documentElement.scrollWidth / 2 - this.targetEl.offsetWidth / 2);
+            console.log(this.targetEl.offsetWidth)
             console.dir(this.targetEl)
         } else if (x.toLowerCase() == 'right') { // 'right'
-            this.targetEl.style.left = (document.documentElement.scrollWidth - this.targetEl.clientWidth) + 'px';
-            this.left = (document.documentElement.scrollWidth - this.targetEl.clientWidth);
-            console.log(this.targetEl.clientWidth)
+            this.targetEl.style.left = (document.documentElement.scrollWidth - this.targetEl.offsetWidth) + 'px';
+            this.left = (document.documentElement.scrollWidth - this.targetEl.offsetWidth);
+            console.log(this.targetEl.offsetWidth)
         } else {
             console.error('Err: "'+ option.el + '" left is error');
-            this.targetEl.style.left = (document.documentElement.scrollWidth / 2 - this.targetEl.clientWidth / 2) + 'px';
-            this.left = (document.documentElement.scrollWidth / 2 - this.targetEl.clientWidth / 2);
+            this.targetEl.style.left = (document.documentElement.scrollWidth / 2 - this.targetEl.offsetWidth / 2) + 'px';
+            this.left = (document.documentElement.scrollWidth / 2 - this.targetEl.offsetWidth / 2);
         }
     }
     /**
@@ -375,15 +375,15 @@ function Ddrag (option) {
             this.targetEl.style.top = '0px';
             this.top = 0;
         } else if (y.toLowerCase() == 'middle') { // 'middle'
-            this.targetEl.style.top = (document.documentElement.scrollHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
-            this.top = (document.documentElement.scrollHeight / 2 - this.targetEl.clientHeight / 2);
+            this.targetEl.style.top = (document.documentElement.scrollHeight / 2 - this.targetEl.offsetHeight / 2) + 'px';
+            this.top = (document.documentElement.scrollHeight / 2 - this.targetEl.offsetHeight / 2);
         } else if (y.toLowerCase() == 'bottom') { // 'bottom'
-            this.targetEl.style.top = (document.documentElement.scrollHeight - this.targetEl.clientHeight) + 'px';
-            this.top = (document.documentElement.scrollHeight - this.targetEl.clientHeight);
+            this.targetEl.style.top = (document.documentElement.scrollHeight - this.targetEl.offsetHeight) + 'px';
+            this.top = (document.documentElement.scrollHeight - this.targetEl.offsetHeight);
         } else {
             console.error('Err: "'+ option.el + '" top is error');
-            this.targetEl.style.top = (document.documentElement.scrollHeight / 2 - this.targetEl.clientHeight / 2) + 'px';
-            this.top = (document.documentElement.scrollHeight / 2 - this.targetEl.clientHeight / 2);
+            this.targetEl.style.top = (document.documentElement.scrollHeight / 2 - this.targetEl.offsetHeight / 2) + 'px';
+            this.top = (document.documentElement.scrollHeight / 2 - this.targetEl.offsetHeight / 2);
         }
     }
 }
