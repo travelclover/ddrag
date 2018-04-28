@@ -1,6 +1,6 @@
 {
   "name": "ddrag",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "a drag package",
   "main": "main.js",
   "scripts": {
